@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Evaluación: Manual de Procedimientos + Uso Seguro de la IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+
+    --navy: #17324f;
+    --navy-deep: #0e2035;
+    --brass: #b3874a;
+    --brass-light: #d9b57e;
+    --paper: #f2efe6;
+    --paper-card: #fbfaf6;
+    --ink: #22252b;
+    --ink-soft: #5b6472;
+    --line: #d9d3c3;
+    --green: #4e6b34;
+    --green-bg: #eef2e6;
+    --red: #a83f3a;
+    --red-bg: #faeeec;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --navy: #dfe9f3;
+      --navy-deep: #0b1826;
+      --paper: #10141b;
+      --paper-card: #171c25;
+      --ink: #eceef1;
+      --ink-soft: #a8afba;
+      --line: #2b3340;
+      --brass: #d9b57e;
+      --brass-light: #eccf9f;
+      --green: #8fbf6a;
+      --green-bg: #1d2a18;
+      --red: #e08a85;
+      --red-bg: #2e1a19;
+    }
+  }
+  :root[data-theme="dark"] {
+    --navy: #dfe9f3;
+    --navy-deep: #0b1826;
+    --paper: #10141b;
+    --paper-card: #171c25;
+    --ink: #eceef1;
+    --ink-soft: #a8afba;
+    --line: #2b3340;
+    --brass: #d9b57e;
+    --brass-light: #eccf9f;
+    --green: #8fbf6a;
+    --green-bg: #1d2a18;
+    --red: #e08a85;
+    --red-bg: #2e1a19;
+  }
+
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); height: 100%; }
+  * { box-sizing: border-box; }
+  body {
+    height: 100%;
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px calc(28px + env(safe-area-inset-bottom, 0px)) 16px;
+  }
+
+  .stage { width: 100%; max-width: 560px; }
+
+  /* ---- Header / masthead ---- */
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--navy);
+  }
+  .masthead h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--navy);
+    line-height: 1.15;
+  }
+  .masthead p {
+    margin: 3px 0 0 0;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+  }
+  .masthead .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--brass);
+    white-space: nowrap;
+    padding-left: 10px;
+  }
+
+  /* ---- Progress rail ---- */
+  .share-top {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: none;
+    border: 1.5px solid var(--line);
+    border-radius: 3px;
+    padding: 8px 12px;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+  .share-top:hover { border-color: var(--brass); }
+  .share-top .wa-ico { color: #25d366; font-size: 14px; }
+
+  .rail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .rail-track {
+    flex: 1;
+    height: 3px;
+    background: var(--line);
+    position: relative;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .rail-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: var(--brass);
+    transition: width .35s ease;
+  }
+  .rail-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    min-width: 52px;
+    text-align: right;
+  }
+
+  /* ---- Card (keycard styling) ---- */
+  .card {
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 26px 24px 22px 24px;
+    position: relative;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 22px; bottom: 22px;
+    width: 4px;
+    background: var(--brass);
+  }
+  .kicker {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: .02em;
+    color: var(--brass);
+    margin-bottom: 10px;
+  }
+  .question {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.32;
+    margin: 0 0 18px 0;
+    color: var(--navy);
+  }
+
+  .options { display: flex; flex-direction: column; gap: 9px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-align: left;
+    background: transparent;
+    border: 1.5px solid var(--line);
+    border-radius: 3px;
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.4;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .option:hover:not(:disabled) { border-color: var(--brass); }
+  .option:disabled { cursor: default; }
+  .option .letter {
+    flex: none;
+    width: 24px; height: 24px;
+    border: 1.5px solid var(--ink-soft);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-top: 1px;
+  }
+  .option.correct {
+    background: var(--green-bg);
+    border-color: var(--green);
+  }
+  .option.correct .letter { border-color: var(--green); color: var(--green); }
+  .option.incorrect {
+    background: var(--red-bg);
+    border-color: var(--red);
+  }
+  .option.incorrect .letter { border-color: var(--red); color: var(--red); }
+  .option.dim { opacity: .5; }
+
+  .feedback {
+    margin-top: 16px;
+    padding: 13px 14px;
+    border-left: 3px solid var(--navy);
+    background: color-mix(in srgb, var(--navy) 6%, transparent);
+    font-size: 13.5px;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback .verdict {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    margin-bottom: 5px;
+    display: block;
+  }
+  .feedback.ok { border-left-color: var(--green); }
+  .feedback.ok .verdict { color: var(--green); }
+  .feedback.bad { border-left-color: var(--red); }
+  .feedback.bad .verdict { color: var(--red); }
+
+  .next-row { margin-top: 20px; display: flex; justify-content: flex-end; }
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    background: var(--navy);
+    color: var(--paper-card);
+    border: none;
+    border-radius: 3px;
+    padding: 11px 20px;
+    cursor: pointer;
+    display: none;
+  }
+  .btn.show { display: inline-block; }
+  .btn:active { transform: translateY(1px); }
+
+  /* ---- Score screen ---- */
+  .score-wrap { display: none; }
+  .score-wrap.show { display: block; }
+  .score-card {
+    background: var(--navy-deep);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 34px 26px;
+    text-align: center;
+  }
+  .score-card .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--brass-light);
+    margin-bottom: 10px;
+  }
+  .score-big {
+    font-family: 'Fraunces', serif;
+    font-size: 58px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--paper);
+  }
+  .score-big span { font-size: 26px; color: var(--brass-light); }
+  .score-msg {
+    margin-top: 10px;
+    font-size: 14.5px;
+    color: #cdd8e2;
+    line-height: 1.5;
+    max-width: 380px;
+    margin-left: auto; margin-right: auto;
+  }
+  .score-bars {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 22px;
+    flex-wrap: wrap;
+    max-width: 420px;
+    margin-left: auto; margin-right: auto;
+  }
+  .score-bars .dot {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    background: rgba(255,255,255,.15);
+  }
+  .score-bars .dot.ok { background: var(--brass-light); }
+  .score-bars .dot.bad { background: rgba(200,90,80,.7); }
+
+  .score-actions {
+    margin-top: 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .wa-btn {
+    background: #25d366;
+    color: #06210f;
+    font-weight: 700;
+    border: none;
+    border-radius: 3px;
+    padding: 13px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14.5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .retry-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,.35);
+    color: var(--paper);
+    border-radius: 3px;
+    padding: 12px 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .foot-note {
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 18px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 380px) {
+    .score-big { font-size: 46px; }
+    .question { font-size: 17.5px; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="masthead">
+    <div>
+      <h1>Evaluación de comprensión</h1>
+      <p>Manual de Procedimientos &amp; Anexo de uso seguro de la IA</p>
+    </div>
+    <div class="tag" id="tag">40 ítems</div>
+  </div>
+
+
+
+  <div id="quizView">
+    <div class="rail">
+      <div class="rail-track"><div class="rail-fill" id="railFill"></div></div>
+      <div class="rail-count" id="railCount">01 / 30</div>
+    </div>
+
+    <div class="card">
+      <div class="kicker" id="kicker">TEORÍA</div>
+      <p class="question" id="questionText"></p>
+      <div class="options" id="optionsWrap"></div>
+      <div class="feedback" id="feedback">
+        <span class="verdict" id="verdict"></span>
+        <span id="justification"></span>
+      </div>
+      <div class="next-row">
+        <button class="btn" id="nextBtn">Siguiente ítem</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-wrap" id="scoreView">
+    <div class="score-card">
+      <div class="eyebrow">RESULTADO FINAL</div>
+      <div class="score-big" id="scoreBig">0<span>/30</span></div>
+      <p class="score-msg" id="scoreMsg"></p>
+      <div class="score-bars" id="scoreBars"></div>
+      <div class="score-actions">
+        <button class="retry-btn" id="retryBtn">Volver a responder</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+{ tag:"TEORÍA", q:"¿Qué es, según el manual, un manual de procedimientos?",
+  opts:["Una lista de tareas sueltas para cada empleado","Un documento que explica paso a paso cómo se trabaja en un departamento, útil para alguien nuevo","Un reglamento de sanciones para el personal","Un folleto turístico del hotel"],
+  correct:1, j:"El manual no es una lista de tareas sueltas: es una guía que le serviría a una persona nueva para saber exactamente qué hacer si empezara mañana." },
+
+{ tag:"TEORÍA", q:"¿Cuál de estas NO es una de las 5 partes del manual de procedimientos?",
+  opts:["Datos generales del departamento","Turnos y organización del personal","Presupuesto anual del hotel","Coordinación con otros departamentos"],
+  correct:2, j:"Las 5 partes son: datos generales, turnos, procedimientos típicos, protocolo ante imprevistos y coordinación. El presupuesto no forma parte del manual." },
+
+{ tag:"TEORÍA", q:"¿Para qué sirve principalmente un manual de procedimientos?",
+  opts:["Para que todos los empleados de un mismo departamento trabajen de la misma manera, con los mismos criterios","Para reemplazar al supervisor del departamento","Para fijar los sueldos del personal","Para promocionar el hotel en redes sociales"],
+  correct:0, j:"Uno de sus objetivos centrales es que todo el equipo trabaje con los mismos criterios, sin depender de preguntar todo el tiempo." },
+
+{ tag:"CASO · HOUSEKEEPING", q:"Según el ejemplo del manual, ¿quién revisa la lista de habitaciones liberadas que envía Recepción?",
+  opts:["La camarera de piso directamente","La supervisora de piso","El gerente general","El departamento de Mantenimiento"],
+  correct:1, j:"El primer paso del procedimiento indica que la supervisora revisa la lista que envía Recepción." },
+
+{ tag:"CASO · HOUSEKEEPING", q:"En la limpieza de una habitación desocupada, ¿qué se hace justo antes de notificar a Recepción que la habitación está lista?",
+  opts:["La camarera ventila la habitación","La supervisora aprueba la habitación","Se cambia el aire acondicionado","Se factura al huésped"],
+  correct:1, j:"La supervisora aprueba la habitación y recién después notifica a Recepción que puede asignarse." },
+
+{ tag:"CASO · HOUSEKEEPING", q:"Si una camarera encuentra el aire acondicionado roto, ¿qué debe hacer según el protocolo ante imprevistos?",
+  opts:["Intentar repararlo ella misma","Ignorarlo y seguir limpiando","Completar un parte de aviso y entregarlo a la supervisora","Avisar directamente al huésped que hay un problema"],
+  correct:2, j:"El protocolo indica que no debe repararlo: completa un parte de aviso para la supervisora, quien informa a Mantenimiento." },
+
+{ tag:"CASO · HOUSEKEEPING", q:"Mientras se resuelve una falla técnica en una habitación, ¿qué estado debe tener esa habitación?",
+  opts:["Disponible para nuevos huéspedes","\"No disponible\", para que Recepción no la asigne","En limpieza urgente","Reservada para el gerente"],
+  correct:1, j:"La habitación queda marcada como \"no disponible\" mientras se resuelve la falla, para que Recepción no la asigne." },
+
+{ tag:"TEORÍA", q:"¿Con qué departamento coordina Housekeeping para el servicio a la habitación y el retiro de vajilla?",
+  opts:["Recepción","Mantenimiento","Alimentos y Bebidas","Recursos Humanos"],
+  correct:2, j:"El manual indica que esa coordinación específica es con Alimentos y Bebidas." },
+
+{ tag:"TEORÍA", q:"¿Quién controla la calidad de la limpieza antes de habilitar una habitación para un nuevo huésped?",
+  opts:["El recepcionista","La supervisora de piso","El huésped anterior","El gerente de Alimentos y Bebidas"],
+  correct:1, j:"Según el manual, la supervisora de piso controla la calidad antes de habilitar la habitación." },
+
+{ tag:"TEORÍA", q:"En el ejemplo, ¿qué turno se dedica principalmente a repasos puntuales y pedidos especiales como toallas?",
+  opts:["Turno mañana","Turno tarde","Turno noche","Turno de fin de semana"],
+  correct:1, j:"El turno tarde (2 camareras) se ocupa de repasos puntuales y pedidos especiales, según el ejemplo." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Por qué muchas empresas turísticas agregan hoy un apartado de uso seguro de la IA a sus manuales?",
+  opts:["Porque la IA ya no se usa en las empresas","Porque el personal maneja información sensible que puede filtrarse si se carga sin cuidado en una IA","Porque es obligatorio en todos los países del mundo","Porque reemplaza al manual de procedimientos original"],
+  correct:1, j:"El riesgo surge porque se manejan datos sensibles (huéspedes, tarjetas, documentos) que pueden quedar expuestos si se usan mal en una IA." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"Según el anexo, ¿quién es responsable legalmente si un empleado carga un dato personal de un cliente en una IA sin autorización?",
+  opts:["El empleado que cargó el dato","La empresa/el hotel","La herramienta de IA","Nadie, no hay responsabilidad legal"],
+  correct:1, j:"La responsabilidad legal recae en el hotel como empresa, no en el empleado ni en la herramienta." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Cuál de estas NO es una de las 5 partes del anexo de uso seguro de la IA?",
+  opts:["Herramientas de IA que se usan en el departamento","Qué datos se pueden y no se pueden compartir con la IA","Presupuesto de marketing digital","Coordinación con Sistemas o Dirección"],
+  correct:2, j:"Las 5 partes son: herramientas usadas, datos permitidos/prohibidos, procedimiento seguro, protocolo ante errores y coordinación." },
+
+{ tag:"CASO · RECEPCIÓN", q:"Si un huésped le pide al chatbot cambiar su reserva o dar su número de tarjeta, ¿qué debe pasar?",
+  opts:["El chatbot completa el cambio automáticamente","El chatbot deriva a un recepcionista humano y no guarda esos datos","El chatbot guarda el número de tarjeta para agilizar futuras consultas","Se ignora el pedido del huésped"],
+  correct:1, j:"Ante pedidos personales o datos sensibles, el chatbot deriva a un humano y no conserva esa información." },
+
+{ tag:"CASO · RECEPCIÓN", q:"Antes de traducir un reclamo de un huésped extranjero, ¿qué debe hacer el recepcionista?",
+  opts:["Pegar el mensaje completo con nombre y número de habitación en cualquier traductor online","Copiar solo el texto del mensaje, sin nombres ni número de habitación, y usar el traductor autorizado","Pedirle al huésped que hable en español","Enviar la traducción automática sin revisarla"],
+  correct:1, j:"Se minimiza el dato personal expuesto y se usa solo la herramienta de traducción autorizada por el hotel." },
+
+{ tag:"CASO · RECEPCIÓN", q:"¿Qué hace siempre el recepcionista antes de enviar una respuesta traducida por IA a un huésped?",
+  opts:["La envía tal cual la genera la IA","La revisa y corrige antes de enviarla","La reenvía primero a Mantenimiento","Espera 24 horas antes de responder"],
+  correct:1, j:"Nunca se envía una respuesta automática sin que una persona la revise primero." },
+
+{ tag:"CASO · RECEPCIÓN", q:"Si un recepcionista se da cuenta de que escribió por error un número de tarjeta en el chatbot, ¿qué debe hacer primero?",
+  opts:["Borrar la conversación él mismo y no decir nada","Avisar de inmediato a su supervisor","Avisar directamente al huésped sin consultar a nadie","Seguir trabajando, no es grave"],
+  correct:1, j:"El protocolo indica avisar de inmediato al supervisor, quien luego informa a Sistemas." },
+
+{ tag:"CASO · RESERVAS", q:"Cuando el sistema de revenue management (RMS) sugiere una tarifa, ¿qué rol tiene la persona encargada?",
+  opts:["Aplicar la tarifa sugerida sin revisarla nunca","Revisar la sugerencia y decidir si la aplica, ajusta o rechaza","No puede modificar lo que sugiere el sistema","Delegar la decisión al huésped"],
+  correct:1, j:"La IA sugiere, pero la decisión final la toma una persona: \"la IA sugiere, la persona decide\"." },
+
+{ tag:"CASO · RESERVAS", q:"Al armar una campaña de mail marketing con un asistente de IA, ¿qué NO se debe hacer?",
+  opts:["Pedir un texto genérico sobre la promoción","Pegar la lista real de contactos de huéspedes en el asistente de IA","Revisar el texto antes de enviarlo","Cargar la lista de contactos en el sistema de mailing autorizado"],
+  correct:1, j:"La lista real de contactos nunca se pega en el asistente de IA; se carga aparte, en el sistema de mailing autorizado." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Cuál de estos datos SÍ se puede usar de forma general en una herramienta de IA?",
+  opts:["Número de documento de un huésped","Porcentaje de ocupación general del hotel","Número de tarjeta de crédito","Motivo médico de un huésped"],
+  correct:1, j:"Los datos agregados o anonimizados, como un porcentaje de ocupación, sí se pueden usar; los datos personales sensibles no." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Qué significa que un dato esté \"anonimizado\"?",
+  opts:["Que pertenece a una persona anónima que no pagó la reserva","Que se le sacó todo lo que permite identificar a una persona concreta","Que fue generado por una inteligencia artificial","Que solo lo puede ver el gerente"],
+  correct:1, j:"Es información de la que se eliminó todo lo que permitiría identificar a una persona." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Qué es un chatbot, según el vocabulario del anexo?",
+  opts:["Un empleado que atiende en recepción","Un asistente automático que responde consultas por chat sin intervención humana directa","Un sistema que solo funciona sin internet","Un tipo de tarjeta de acceso a las habitaciones"],
+  correct:1, j:"Es la definición dada en el vocabulario básico del anexo." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Qué diferencia a una \"herramienta de IA autorizada\" de una que no lo es?",
+  opts:["El precio de la herramienta","Que el hotel la revisó y aprobó formalmente para uso del personal","Que sea gratuita","Que la haya elegido un solo empleado por su cuenta"],
+  correct:1, j:"Una herramienta autorizada es la que fue aprobada formalmente por el hotel, a diferencia de una app bajada por cuenta propia." },
+
+{ tag:"CASO · RESERVAS", q:"Un empleado nota que se filtró una tarifa confidencial de una agencia por usar una IA no autorizada. ¿Qué corresponde hacer?",
+  opts:["No decir nada para no meterse en problemas","Avisar al supervisor, quien informa a Sistemas y a Dirección Comercial","Cambiar la tarifa sin avisar a nadie","Publicar una disculpa en redes sociales de inmediato"],
+  correct:1, j:"El protocolo ante errores indica avisar al supervisor para evaluar el impacto junto con Sistemas y Dirección." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Con qué área se coordina un departamento para saber qué herramientas de IA están aprobadas por el hotel?",
+  opts:["Con Alimentos y Bebidas siempre","Con Sistemas / Seguridad de la Información","Con ningún área, cada empleado decide solo","Con la competencia"],
+  correct:1, j:"Sistemas es el área que aprueba las herramientas y a la que se reportan dudas de seguridad." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Cuál es la \"regla de oro\" que menciona el anexo sobre el uso de IA?",
+  opts:["La IA nunca se debe usar en un hotel","Una IA puede ayudar a redactar, traducir o resumir, pero una persona siempre revisa el resultado antes de que llegue al huésped","Solo el gerente general puede usar herramientas de IA","Toda respuesta generada por IA se envía sin revisión para ahorrar tiempo"],
+  correct:1, j:"Es la idea central del anexo: la IA ayuda, pero una persona revisa antes de que la respuesta llegue al huésped." },
+
+{ tag:"CASO · RECEPCIÓN", q:"Un chatbot del hotel responde una pregunta general sobre el horario de la pileta a un huésped. ¿Es un uso adecuado?",
+  opts:["No, el chatbot nunca debería responder nada","Sí, porque es información pública y general del hotel","No, solo un humano puede dar horarios","Sí, pero solo si el huésped es socio VIP"],
+  correct:1, j:"El chatbot puede responder consultas generales con información pública, como horarios de servicios." },
+
+{ tag:"TEORÍA", q:"¿Qué relación tiene el anexo de IA con el protocolo ante imprevistos del manual?",
+  opts:["No tiene ninguna relación","Un error de IA se trata igual que cualquier otro imprevisto, con aviso al supervisor","Reemplaza completamente el protocolo ante imprevistos","Solo se aplica los fines de semana"],
+  correct:1, j:"El anexo recomienda relacionar ambos puntos: un error de IA se maneja igual que cualquier imprevisto." },
+
+{ tag:"TEORÍA", q:"Si una herramienta nueva de IA parece útil pero no se sabe si es segura, ¿qué corresponde hacer?",
+  opts:["Usarla de todas formas porque parece útil","Consultarlo con Sistemas o Dirección antes de usarla","Compartirla con todo el hotel sin avisar a nadie","Esperar a que un huésped se queje para decidir"],
+  correct:1, j:"El anexo indica que hay que coordinarse con Sistemas o Dirección para saber si una herramienta nueva está autorizada." },
+
+{ tag:"TEORÍA · ANEXO IA", q:"¿Qué es la IA generativa, según el vocabulario del anexo?",
+  opts:["Un tipo de IA que solo predice el clima","Un tipo de IA que crea contenido nuevo (textos, traducciones, imágenes) a partir de lo que se le pide","Un sistema que borra datos automáticamente","Un sinónimo de \"dato personal\""],
+  correct:1, j:"Es la definición del vocabulario básico, ejemplificada con herramientas como los asistentes conversacionales." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Qué es el aprendizaje automático (machine learning)?",
+  opts:["Una técnica que permite a las máquinas aprender de datos y mejorar sin ser programadas paso a paso para cada tarea","Un tipo de chatbot que solo responde con palabras clave","Un sistema que reemplaza a los datos de entrenamiento","Un protocolo de seguridad informática"],
+  correct:0, j:"El aprendizaje automático es la rama de la IA que desarrolla algoritmos que aprenden de la experiencia y los datos, en vez de seguir reglas fijas escritas a mano." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Para qué sirve el Procesamiento de Lenguaje Natural (PLN) en un hotel?",
+  opts:["Para que las máquinas comprendan, analicen y generen lenguaje humano, facilitando la comunicación con los huéspedes","Para procesar pagos con tarjeta","Para limpiar las habitaciones automáticamente","Para controlar la temperatura del hotel"],
+  correct:0, j:"El PLN es lo que permite que un chatbot entienda y responda en lenguaje humano, no solo por palabras clave sueltas." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Por qué son importantes los datos para entrenar un sistema de IA?",
+  opts:["Porque cuantos más datos de calidad recibe, más preciso y adaptable es el sistema","Porque los datos reemplazan a los empleados","Porque sin datos la IA no puede conectarse a internet","Porque los datos determinan el precio de las habitaciones sin intervención humana"],
+  correct:0, j:"Los algoritmos necesitan grandes cantidades de datos de calidad para aprender patrones y hacer predicciones más precisas." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Cuál es la diferencia principal entre un chatbot automatizado y uno inteligente?",
+  opts:["El automatizado sigue palabras clave y flujos fijos; el inteligente comprende el lenguaje de forma más natural y se adapta","El automatizado usa inteligencia artificial y el inteligente no","No hay ninguna diferencia real entre ambos","El chatbot inteligente solo funciona de noche"],
+  correct:0, j:"Los chatbots automatizados siguen reglas y flujos predefinidos; los inteligentes usan PLN y aprendizaje automático para interpretar intenciones y adaptarse al contexto." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Qué aplicación de la IA permite ajustar las tarifas de las habitaciones según la demanda, eventos locales y la temporada?",
+  opts:["La optimización de precios y disponibilidad (revenue management)","La gestión de quejas","El reconocimiento facial","La realidad aumentada"],
+  correct:0, j:"Los algoritmos predictivos analizan datos históricos y de contexto para ajustar precios y maximizar los ingresos según la demanda." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Cómo puede la IA contribuir a la seguridad de un hotel?",
+  opts:["Analizando imágenes de cámaras y registros de acceso para detectar patrones inusuales o comportamientos sospechosos","Reemplazando completamente al personal de seguridad","Bloqueando el WiFi del hotel","Aumentando el precio de las habitaciones"],
+  correct:0, j:"La IA puede analizar datos de seguridad para anticipar riesgos y responder más rápido ante posibles amenazas." },
+
+{ tag:"CASO · RESERVAS", q:"Un chatbot inteligente conectado al motor de reservas y al sistema de gestión del hotel, ¿qué puede lograr?",
+  opts:["Permitir reservas directas, consultar disponibilidad en tiempo real y evitar la doble reserva entre canales","Fijar los sueldos del personal","Reemplazar al gerente general del hotel","Limpiar las habitaciones automáticamente"],
+  correct:0, j:"Al integrarse con el motor de reservas y el sistema de gestión, el chatbot gestiona reservas sin fricciones y mantiene la disponibilidad sincronizada en todos los canales." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Cuál de estas es una tendencia futura de la IA en hotelería?",
+  opts:["El reconocimiento facial para check-ins sin contacto","La eliminación total e inmediata de la recepción humana","La prohibición de chatbots en todos los hoteles","El regreso al registro exclusivamente en papel"],
+  correct:0, j:"La identificación biométrica, como el reconocimiento facial, se menciona como una tecnología emergente para check-ins más ágiles y seguros." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Qué ventaja destacan los materiales sobre la disponibilidad de un chatbot inteligente frente a la atención tradicional?",
+  opts:["Puede atender consultas las 24 horas, los 7 días de la semana, sin tiempos de espera","Solo funciona en horario de oficina, igual que el personal","Requiere que el huésped llame por teléfono para activarse","Solo responde consultas los fines de semana"],
+  correct:0, j:"Uno de los mayores beneficios de un chatbot inteligente es la disponibilidad constante y las respuestas instantáneas, mejorando la experiencia del huésped." },
+
+{ tag:"TEORÍA · APLICACIONES IA", q:"¿Por qué se dice que la IA es, al mismo tiempo, un riesgo y una oportunidad?",
+  opts:["Porque, como cualquier tecnología, puede usarse tanto para fines positivos (mejorar servicios) como negativos (contenido falso o fraudulento)","Porque la IA solo trae riesgos y ninguna oportunidad","Porque la IA es completamente segura y no tiene ningún riesgo","Porque solo las grandes cadenas hoteleras pueden usarla"],
+  correct:0, j:"La IA puede usarse para actividades cuestionables (por ejemplo, contenido falso), pero también representa una oportunidad enorme para resolver problemas y mejorar procesos del hotel." }
+];
+
+let current = 0;
+let score = 0;
+let answered = [];
+
+const railFill = document.getElementById('railFill');
+const railCount = document.getElementById('railCount');
+const kicker = document.getElementById('kicker');
+const questionText = document.getElementById('questionText');
+const optionsWrap = document.getElementById('optionsWrap');
+const feedback = document.getElementById('feedback');
+const verdict = document.getElementById('verdict');
+const justification = document.getElementById('justification');
+const nextBtn = document.getElementById('nextBtn');
+const quizView = document.getElementById('quizView');
+const scoreView = document.getElementById('scoreView');
+const letters = ['A','B','C','D'];
+
+function pad(n){ return n < 10 ? '0'+n : ''+n; }
+
+function renderQuestion(){
+  const item = QUESTIONS[current];
+  kicker.textContent = item.tag;
+  questionText.textContent = item.q;
+  optionsWrap.innerHTML = '';
+  feedback.className = 'feedback';
+  nextBtn.classList.remove('show');
+  railFill.style.width = ((current) / QUESTIONS.length * 100) + '%';
+  railCount.textContent = pad(current+1) + ' / ' + QUESTIONS.length;
+
+  item.opts.forEach((optText, i) => {
+    const b = document.createElement('button');
+    b.className = 'option';
+    b.innerHTML = '<span class="letter">' + letters[i] + '</span><span>' + optText + '</span>';
+    b.addEventListener('click', () => selectOption(i));
+    optionsWrap.appendChild(b);
+  });
+}
+
+function selectOption(i){
+  const item = QUESTIONS[current];
+  const opts = optionsWrap.querySelectorAll('.option');
+  opts.forEach((el, idx) => {
+    el.disabled = true;
+    if (idx === item.correct) el.classList.add('correct');
+    else if (idx === i) el.classList.add('incorrect');
+    else el.classList.add('dim');
+  });
+
+  const isCorrect = i === item.correct;
+  if (isCorrect) score++;
+  answered.push(isCorrect);
+
+  feedback.classList.add('show', isCorrect ? 'ok' : 'bad');
+  verdict.textContent = isCorrect ? 'CORRECTO' : 'INCORRECTO';
+  justification.textContent = item.j;
+
+  nextBtn.classList.add('show');
+  nextBtn.textContent = (current === QUESTIONS.length - 1) ? 'Ver resultado final' : 'Siguiente ítem';
+}
+
+nextBtn.addEventListener('click', () => {
+  current++;
+  if (current >= QUESTIONS.length) {
+    showScore();
+  } else {
+    renderQuestion();
+  }
+});
+
+function showScore(){
+  quizView.style.display = 'none';
+  scoreView.classList.add('show');
+  railFill.style.width = '100%';
+
+  document.getElementById('scoreBig').innerHTML = score + '<span>/' + QUESTIONS.length + '</span>';
+
+  let msg;
+  const pct = score / QUESTIONS.length;
+  if (pct >= 0.9) msg = "Excelente. Domina tanto el manual de procedimientos como el anexo de uso seguro de la IA.";
+  else if (pct >= 0.7) msg = "Muy buen resultado. Repase los ítems fallados para terminar de afianzar los conceptos.";
+  else if (pct >= 0.5) msg = "Resultado aceptable. Conviene repasar el manual y el anexo antes de la simulación final.";
+  else msg = "Conviene volver a leer el manual de procedimientos y el anexo de IA antes de reintentar.";
+  document.getElementById('scoreMsg').textContent = msg;
+
+  const bars = document.getElementById('scoreBars');
+  bars.innerHTML = '';
+  answered.forEach(ok => {
+    const d = document.createElement('div');
+    d.className = 'dot ' + (ok ? 'ok' : 'bad');
+    bars.appendChild(d);
+  });
+
+}
+
+document.getElementById('retryBtn').addEventListener('click', () => {
+  current = 0; score = 0; answered = [];
+  scoreView.classList.remove('show');
+  quizView.style.display = 'block';
+  renderQuestion();
+});
+
+renderQuestion();
+</script>
+</body>
+</html>
